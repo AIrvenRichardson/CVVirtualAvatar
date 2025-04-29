@@ -1,6 +1,6 @@
 This is my virtual avatar camera application, it uses a simpleCNN model trained on 3 classes of facial affect (using only images, not facial points, which likely would be more accurate) along with your camera and microphone to make a simple virtual avatar act. 
 
-This project was really just intended for me to work with come computer vision, but you're more than welcome to use it, to do so:
+This project was really just intended for me to work with some computer vision, but you're more than welcome to use it, to do so:
 1. PLEASE make a venv (Python 3.11.11 and 3.13.3 work, anything after or in-between will probably work as well).
 2. pip install -r requirements.txt while in the root
 3. Run main.py
@@ -29,6 +29,7 @@ CHANGING AVATARS
             hap.png
             neu.png
         ...
+    Then simply change the AVATAR variable to be the avatar's base folder (in this case, "Custom")
 
 EXPRESSIONS
     The model is not great, it only has pretty exaggerated images of expressions to work with. For the most part, any big smile (especially with teeth) will trigger happy, lowering your brow or doing a Kubrick stare will trigger angry, and anythin else will be neutral.
