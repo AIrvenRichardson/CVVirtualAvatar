@@ -3,8 +3,13 @@ from torch import nn
 from operator import indexOf
 from pygame._sdl2.audio import get_audio_device_names, AudioDevice, AUDIO_F32, AUDIO_ALLOW_FORMAT_CHANGE
 
-global talking
+# VARIABLES YOU CAN/SHOULD CHANGE
+TALKING_MIC_LEVEL = 0.009 # FIND A VALUE THAT WORKS FOR YOUR MIC (HYPERPARAMETER, YOU WILL LIKELY NEED TO ADJUST THIS, MY MIC SUCKS)
+AUDIO_DEVICE_ID = 1 # Run mic_find.py to find this value for you (0 is your default mic)
+AVATAR = "cat" # Change to the folder name of the avatar you want to use. Custom avatar instructions are in the readme
 
+# Audio callback that modifies a global variable to control the avatar's talking state
+global talking
 def callback(audiodevice, audiomemoryview):
     #https://www.youtube.com/watch?v=675teI6-_-g RMS implementation source
     global talking
@@ -15,7 +20,7 @@ def callback(audiodevice, audiomemoryview):
         sample = sound_data[i] + sound_data[i+1]
         rms += sample*sample
     rms = math.sqrt(rms/512)
-    if rms > 0.009: # FIND A VALUE THAT WORKS FOR YOUR MIC (HYPERPARAMETER, YOU WILL LIKELY NEED TO ADJUST THIS, MY MIC SUCKS)
+    if rms > TALKING_MIC_LEVEL: # FIND A VALUE THAT WORKS FOR YOUR MIC (HYPERPARAMETER, YOU WILL LIKELY NEED TO ADJUST THIS, MY MIC SUCKS)
         talking = True
     else:
         talking = False
@@ -46,12 +51,13 @@ def main():
     running = True
 
     # AVATAR SETUP
-    avatarimgs = [pygame.image.load('avatarimgs/cat/ang.png'),
-                  pygame.image.load('avatarimgs/cat/hap.png'),
-                  pygame.image.load('avatarimgs/cat/neu.png'),
-                  pygame.image.load('avatarimgs/cat/talking/ang.png'),
-                  pygame.image.load('avatarimgs/cat/talking/hap.png'),
-                  pygame.image.load('avatarimgs/cat/talking/neu.png')]
+    basepath = 'avatarimgs/' + AVATAR + '/'
+    avatarimgs = [pygame.image.load(basepath + 'ang.png'),
+                  pygame.image.load(basepath + 'hap.png'),
+                  pygame.image.load(basepath + 'neu.png'),
+                  pygame.image.load(basepath + 'talking/ang.png'),
+                  pygame.image.load(basepath + 'talking/hap.png'),
+                  pygame.image.load(basepath + 'talking/neu.png')]
     follow = True
     headpos = [0,0]
 
@@ -61,7 +67,7 @@ def main():
     # AUDIO SETUP
     names = get_audio_device_names(True)
     audio = AudioDevice(
-        devicename=names[1], # THIS DETERMINES WHAT MICROPHONE TO USE, IF IT DOESN'T WORK TRY A DIFFERENT NUMBER LIKE 0 OR 1
+        devicename=names[AUDIO_DEVICE_ID], # THIS DETERMINES WHAT MICROPHONE TO USE, IF IT DOESN'T WORK TRY A DIFFERENT NUMBER LIKE 0 OR 1
         iscapture=True,
         frequency=44100,
         audioformat=AUDIO_F32,
